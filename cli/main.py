@@ -68,6 +68,7 @@ class MessageBuffer:
             "fundamentals_report": None,
             "investment_plan": None,
             "trader_investment_plan": None,
+            "risk_debate": None,
             "final_trade_decision": None,
         }
 
@@ -109,6 +110,7 @@ class MessageBuffer:
                 "fundamentals_report": "Fundamentals Analysis",
                 "investment_plan": "Research Team Decision",
                 "trader_investment_plan": "Trading Team Plan",
+                "risk_debate": "Risk Management Team Debate",
                 "final_trade_decision": "Portfolio Management Decision",
             }
             self.current_report = (
@@ -158,6 +160,11 @@ class MessageBuffer:
         if self.report_sections["trader_investment_plan"]:
             report_parts.append("## Trading Team Plan")
             report_parts.append(f"{self.report_sections['trader_investment_plan']}")
+        
+        # Risk Management Team Debate 
+        if self.report_sections["risk_debate"]:
+            report_parts.append("## Risk Management Team Debate")
+            report_parts.append(f"{self.report_sections['risk_debate']}")
 
         # Portfolio Management Decision
         if self.report_sections["final_trade_decision"]:
@@ -989,6 +996,7 @@ def run_analysis():
                 # Risk Management Team - Handle Risk Debate State
                 if "risk_debate_state" in chunk and chunk["risk_debate_state"]:
                     risk_state = chunk["risk_debate_state"]
+                    risk_debate_content = ""
 
                     # Update Risky Analyst status and report
                     if (
@@ -1002,10 +1010,11 @@ def run_analysis():
                             "Reasoning",
                             f"Risky Analyst: {risk_state['current_risky_response']}",
                         )
-                        # Update risk report with risky analyst's latest analysis only
+                        # Update risk report with adding risky analyst's latest analysis
+                        risk_debate_content += f"### Risky Analyst Analysis\n{risk_state['current_risky_response']}\n"
                         message_buffer.update_report_section(
-                            "final_trade_decision",
-                            f"### Risky Analyst Analysis\n{risk_state['current_risky_response']}",
+                            "risk_debate",
+                            risk_debate_content,
                         )
 
                     # Update Safe Analyst status and report
@@ -1020,10 +1029,11 @@ def run_analysis():
                             "Reasoning",
                             f"Safe Analyst: {risk_state['current_safe_response']}",
                         )
-                        # Update risk report with safe analyst's latest analysis only
+                        # Update risk report with adding safe analyst's latest analysis
+                        risk_debate_content += f"### Safe Analyst Analysis\n{risk_state['current_safe_response']}\n"
                         message_buffer.update_report_section(
-                            "final_trade_decision",
-                            f"### Safe Analyst Analysis\n{risk_state['current_safe_response']}",
+                            "risk_debate",
+                            risk_debate_content,
                         )
 
                     # Update Neutral Analyst status and report
@@ -1038,10 +1048,11 @@ def run_analysis():
                             "Reasoning",
                             f"Neutral Analyst: {risk_state['current_neutral_response']}",
                         )
-                        # Update risk report with neutral analyst's latest analysis only
+                        # Update risk report with adding neutral analyst's latest analysis
+                        risk_debate_content += f"### Neutral Analyst Analysis\n{risk_state['current_neutral_response']}\n"
                         message_buffer.update_report_section(
-                            "final_trade_decision",
-                            f"### Neutral Analyst Analysis\n{risk_state['current_neutral_response']}",
+                            "risk_debate",
+                            risk_debate_content,
                         )
 
                     # Update Portfolio Manager status and final decision
